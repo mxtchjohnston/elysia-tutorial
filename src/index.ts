@@ -1,12 +1,17 @@
-import { Elysia, t } from "elysia";
-import { swagger } from "@elysiajs/swagger"
+import { Elysia } from 'elysia'
+import { swagger } from '@elysiajs/swagger'
 
-import { note } from "./note";
+import { note } from './note'
+import { user } from './user'
+
 const app = new Elysia()
-  .use(swagger())
-  .use(note)
-  .listen(8088);
+    .use(swagger())
+    .onError(({ error, code }) => {
+        if (code === 'NOT_FOUND') return 'Not Found :('
 
-console.log(
-  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}/`
-);
+        console.error(error)
+    })
+    .use(user)
+    .use(note)
+    .listen(3000)
+
